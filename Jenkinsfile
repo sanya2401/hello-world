@@ -16,6 +16,16 @@ pipeline {
                 // Example: Run unit tests with a test tool like JUnit
                 // sh 'mvn test'
             }
+            post {
+                always {
+                    emailext(
+                        to: 'karanbalhotra@example.com',
+                        subject: "Unit and Integration Tests: ${currentBuild.currentResult}",
+                        body: "The Unit and Integration tests have finished with status: ${currentBuild.currentResult}. Check the attached logs for details.",
+                        attachLog: true
+                    )
+                }
+            }
         }
 
         stage('Code Analysis') {
@@ -34,10 +44,12 @@ pipeline {
             }
             post {
                 always {
-                    emailext to: 'developer@example.com',
+                    emailext(
+                        to: 'karanbalhotra@example.com',
                         subject: "Security Scan Completed: ${currentBuild.currentResult}",
-                        body: "The security scan has finished. Check the logs for more details.",
+                        body: "The security scan has finished with status: ${currentBuild.currentResult}. Logs are attached for your reference.",
                         attachLog: true
+                    )
                 }
             }
         }
@@ -69,10 +81,20 @@ pipeline {
 
     post {
         success {
-            echo 'Pipeline completed successfully!'
+            emailext(
+                to: 'karanbalhotra@example.com',
+                subject: "Jenkins Pipeline Success",
+                body: "The pipeline completed successfully. Well done!",
+                attachLog: true
+            )
         }
         failure {
-            echo 'Pipeline failed!'
+            emailext(
+                to: 'karanbalhotra@example.com',
+                subject: "Jenkins Pipeline Failure",
+                body: "The pipeline failed. Check the logs for details.",
+                attachLog: true
+            )
         }
     }
 }
